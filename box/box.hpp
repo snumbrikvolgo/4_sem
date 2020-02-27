@@ -18,5 +18,6 @@ typedef struct box{
     void  (*erase)  (struct box* object);
 
     void  (*dtor)   (struct box* object);
+    void  (*dump)   (struct box* object);
 } box;
 #endif //pudge_box_h
