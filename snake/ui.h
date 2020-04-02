@@ -34,6 +34,7 @@ public:
   virtual void painter(const Rabbit&) = 0;
   // score
   virtual void painter(int, int) = 0;
+  virtual void winch() = 0;
 
 protected:
   Ui() = default;

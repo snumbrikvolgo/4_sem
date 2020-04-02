@@ -8,6 +8,7 @@
 
 class Tty : public Ui {
 public:
+
   Tty();
   ~Tty();
 
@@ -41,6 +42,7 @@ public:
   //void init_tty(int echo);
   //void fini_tty();
   void winch(); //windowchange
+  static void handler(int a = 0);
 
 private:
   struct winsize ws;

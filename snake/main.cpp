@@ -5,14 +5,15 @@
 #include "game.h"
 
 int main() {
-  //Tty v;
 
   std::unique_ptr<Ui> v(Ui::get("tty"));
   if (!v) {
     fprintf(stderr, "Cannot init UI\n");
     return 0;
   }
-    v -> draw();
+  v -> draw();
+  while (1);
+
 
   //Game g;
   //Human h(g);

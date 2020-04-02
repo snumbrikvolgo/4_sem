@@ -5,30 +5,41 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <signal.h>
+
+void Tty::handler(int a) {
+    Ui::get() -> winch();
+}
+
 void Tty::winch()
 {
-    ioctl(1, TIOCGWINSZ, &ws);
+    ioctl(0, TIOCGWINSZ, &ws);
+    draw();
 }
-Tty::Tty() {
+
+Tty::Tty()
+{
   //init_tty(0);
   //winch();
   ioctl(0, TIOCGWINSZ, &ws);
+  //printf("%d %d\n", winx(), winy());
   setvbuf(stdout, NULL, _IONBF, 0);
 }
 
-Tty::~Tty() {
-printf("bye!\n");
-  cls();
+Tty::~Tty()
+{
+  //cls();
   //fini_tty();
   setvbuf(stdout, NULL, _IOLBF, 0);
   printf("bye!\n");
 }
 
-void Tty::cls() {
+void Tty::cls()
+{
   printf("\e[H\e[J\e[m");
 }
 
-void Tty::gotoxy(int x, int y) {
+void Tty::gotoxy(int x, int y)
+{
   printf("\e[%d;%dH", ws.ws_row - y, x + 1);
 }
 
@@ -75,18 +86,19 @@ void Tty::painter(const Rabbit& s){
 }
 void Tty::draw()
 {
-    winch();
     cls();
-    printf("\ec");
+    signal(SIGWINCH, handler);
+
+    //printf("\ec");
     vline(0,0,winy());
     hline(0,0, winx());
+    printf("%d\n", winx() );
     vline(winx() - 1,0,winy());
     hline(0,winy() - 1, winx());
-    printf("\e[1m\e[%d;%dH\e[31mR\e[33mA\e[32mI\e[36mN\e[34mB\e[35mO\e[37mW\e[5m!",
+    printf("\e[1m\e[%d;%dH\e[31mR\e[33mA\e[32mI\e[36mN\e[34mB\e[35mO\e[37mW\e[37m!",
             winy()/2+1, winx()/2-3);
     gotoxy(3,0);
     printf(" Score: ");
-    printf("kekus\n" );
-    //fflush(stdout);
+    fflush(stdout);
 }
 void Tty::putc(int x, int y, char c){};
