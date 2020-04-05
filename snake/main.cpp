@@ -11,11 +11,15 @@ int main() {
     fprintf(stderr, "Cannot init UI\n");
     return 0;
   }
-  v -> draw();
-  while (1);
+  Game * g = Game::get();
+  //Snake s;   вызывает тормоза
+  //g ->add(s);
+  //g -> add(s);
+  v -> set_model(g);
+  v -> run();
 
+  while(1);
 
-  //Game g;
   //Human h(g);
   //Robot s1(g), s2(g), s3(g);
 

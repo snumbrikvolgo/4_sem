@@ -13,45 +13,56 @@ struct Coord : std::pair<int,int> {
             };
 };
 
+enum Dir{
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT,
+    BODY,
+    NONE,
+};
+
+
 class Game;
 class Snake{
 public:
-        enum Direction{
-            UP,
-            DOWN,
-            RIGHT,
-            LEFT,
-            BODY,
-            NONE,
-        };
 
-        explicit Snake(Game&);
+        explicit Snake();
+        Snake(const Snake& s):dir(s.dir), body(s.body){}
+        //Snake& operator=(const Snake&) = delete;
 
-        Snake(const Snake&) = delete;
-        Snake& operator=(const Snake&) = delete;
-        void set_direction(enum Direction d) {dir = d;}
-
-        Coord next();
+        Coord next(Dir d, Coord a);
         void move(std::list<Coord>& rabbits);
 
-        bool stopped;
-        Direction dir;
+        Snake& operator=(const Snake & s){
+        dir = s.dir;
+        body = s.body;
+        return * this;
+        }
+        void set_direction(Dir d);
+
+        bool alive;
+        //bool stopped;
+        Dir dir;
         int brand;
         std::list<Coord> body;
 protected:
-        Game& game;
+        //Game& game;
 };
 
 struct Segment : Coord {
-        Segment(const Coord& c, int b, Snake::Direction d)
+        Segment(const Coord& c, int b, Dir d)
                 : Coord(c), brand(b), dir(d){}
         int brand;
-        Snake::Direction dir;
+        Dir dir;
 };
 struct Rabbit: Coord, std::optional<int>{
         Rabbit(const Coord& c, const std::optional<int>& d = std::nullopt)
             :Coord(c), std::optional<int>(d) {}
 };
+
+using SnakePainter = std::function<void(Coord, Dir)>;
+using RabbbitPainter = std::function<void(Coord)>;
 
 class Game {
 public:
@@ -61,18 +72,28 @@ public:
         MAX_RABBITS = 10,
     };
 
-    Game() {
-        std::cout << "Game class creates\n" << std::endl;
-    };
+    Game();
     void add(Snake& s);
     void move();
-    void draw();
+    void paint();
+
+    void rabbitgenerate();
+    bool checkplace(Coord c);
+    char checkplacesnake(Coord c);
+    Coord near(Coord c);
+    Coord GetFreeCoord();
+    void KillRabbit(Coord c);
 
     Coord randxy();
 
     bool is_clear(Coord, bool skip_rabbits = false);
     std::optional<Coord> rabbit_near(Coord);
+
+
+    static Game * get();
+    static Game * inst;
 private:
+
         std:: list<std::reference_wrapper<Snake>> snakes;
         std::list<Coord> rabbits;
 };

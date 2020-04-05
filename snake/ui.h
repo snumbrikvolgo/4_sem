@@ -1,10 +1,15 @@
 #pragma once
 #include "game.h"
+#include <poll.h>
+#include <time.h>
 
-class Ui { // user interface class
+using timeoutable = std::function<void()>;
+//using event_fn = std::function<void(int)>;
+//using timer_fn = std::function<void(void)>;
+
+class Ui {
 public:
-  //using event_fn = std::function<void(int)>;
-  //using timer_fn = std::function<void(void)>;
+
   enum {
     KEY_UP = 1000,
     KEY_DOWN,
@@ -35,9 +40,18 @@ public:
   // score
   virtual void painter(int, int) = 0;
   virtual void winch() = 0;
+  virtual void run() = 0;
+  void set_model(Game* g)
+  {
+      game = g;
+  }
+
+  Game* game;
 
 protected:
   Ui() = default;
+  int x;
+  int y;
 
 private:
   static Ui* instance;

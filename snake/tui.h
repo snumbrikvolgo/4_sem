@@ -1,5 +1,4 @@
 #pragma once
-
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <vector>
@@ -12,10 +11,10 @@ public:
   Tty();
   ~Tty();
 
-  int winx() const { return ws.ws_col; }
-  int winy() const { return ws.ws_row; }
+  int winx() const { return x; }
+  int winy() const { return y; }
 
-  //void run(Game&);
+  void run();
   //void quit();
 
   //void on_key(event_fn fn);
@@ -42,12 +41,11 @@ public:
   //void init_tty(int echo);
   //void fini_tty();
   void winch(); //windowchange
-  static void handler(int a = 0);
+  //static void handler(int a = 0);
 
 private:
-  struct winsize ws;
-  struct termios ttys;
   bool running;
+  struct termios old;
   //Game* game;
 
   //std::vector<event_fn> events;

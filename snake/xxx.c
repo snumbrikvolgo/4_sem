@@ -9,7 +9,7 @@ void draw(int row, int col);
 struct winsize argp;
 
 void handler() {
-  ioctl(0, TIOCGWINSZ, &argp);
+  ioctl(1, TIOCGWINSZ, &argp);
   draw(argp.ws_row, argp.ws_col);
 }
 
