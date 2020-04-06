@@ -168,7 +168,7 @@ void Tty::run()
             gotoxy(winx()/2, winy()/2);
             if(c == 'q')    return;
 
-            //onkey_delegater->onkey(c);
+            onkey_delegater->onkey(c);
         }
 
         worktime.tv_sec = finish_time.tv_sec - start_time.tv_sec;

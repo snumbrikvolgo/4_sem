@@ -1,11 +1,15 @@
 #pragma once
+#include "key.h"
 #include "game.h"
+
+//#include "AI.h"
+
 #include <poll.h>
 #include <time.h>
 
 using timeontable = std::function<void()>;
-//using event_fn = std::function<void(int)>;
-//using timer_fn = std::function<void(void)>;
+
+class AI;
 
 class Ui {
 public:
@@ -17,31 +21,40 @@ public:
     KEY_LEFT,
   };
 
+  Key* onkey_delegater;
+  AI * AI_deligater;
+
+  void setonAI(AI * ai)
+    {
+        AI_deligater = ai;
+    }
+
+  void setonkey(Key* key)
+   {
+       onkey_delegater = key;
+   }
+
   std::list <std::pair < long, timeontable>> ontime_deligater;
-  static Ui* get(const char* item = NULL); // if call get() then item = NULL
+  static Ui* get(const char* item = NULL);
 
   virtual int winx() const = 0;
   virtual int winy() const = 0;
 
-  //virtual void run(Game&) = 0;
   virtual void draw() = 0;
-  //virtual void quit() = 0;
 
   virtual ~Ui() = 0;
 
   void setontimer(struct timespec timeout, timeontable t)
     {
         std::pair <long , timeontable> n;
-
+        //printf("chlen\n" );
+        //printf("chlen\n" );
         n.first = timeout.tv_nsec / 1000000 + timeout.tv_sec * 1000;
         n.second = t;
 
         //if(ontime_deligater.front().first >= n.first) ontime_deligater.push_front(n);
         ontime_deligater.push_back(n);
     }
-
-  //virtual void on_key(event_fn fn) = 0;
-  //virtual void on_timer(int, timer_fn fn) = 0;
 
   virtual void snakepainter(const Coord& s, const Dir& d) = 0;
   virtual void rabbitpainter(const Coord&) = 0;

@@ -2,8 +2,9 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <vector>
-#include "game.h"
 #include "ui.h"
+#include "game.h"
+
 
 class Tty : public Ui {
 public:

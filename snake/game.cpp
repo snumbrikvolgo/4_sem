@@ -1,5 +1,7 @@
-#include "ui.h"
 #include "game.h"
+#include "ui.h"
+
+#include "AI.h"
 #include <iostream>
 
 #define RAABBIT_TIME 4
@@ -76,14 +78,14 @@ Coord Game::GetFreeCoord()
 void Game::rabbitgenerate()
 {
     Coord c;
-    srand(1);
+    srand(5);
 
     struct timespec t;
     t = {RAABBIT_TIME, 0};
     Ui::get()->setontimer(t, std::bind(&Game::rabbitgenerate, this));
 
     while(1) {
-
+        //printf("hui\n" );
         c.first = rand() % Ui::get()->winx();
         c.second = rand() % Ui::get()->winy();
 
@@ -103,7 +105,7 @@ void Game::rabbitgenerate()
 Snake::Snake()
 {
     alive = true;
-    dir = UP;
+    dir = DOWN;
 
     Coord c = Game::get()->GetFreeCoord();
     // Coord c;
@@ -133,7 +135,7 @@ void Game::move()
         Ui::get()->~Ui();
     }
 
-    //Ui::get()->AI_deligater->OnMove();
+    Ui::get()->AI_deligater->OnMove();
 
     for(auto s: snakes)
         if(s->alive)
@@ -157,11 +159,11 @@ Coord Snake::NextPosition(Dir d, Coord a)
 {
     switch (d) {
         case UP:
-            a.second --;
+            a.second ++;
             break;
 
         case DOWN:
-            a.second ++;
+            a.second --;
             break;
 
         case LEFT:

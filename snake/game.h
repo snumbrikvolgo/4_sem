@@ -10,7 +10,7 @@ struct Coord : std::pair<int,int> {
         using Base = std::pair<int,int>;
         using Base::Base;
         int distance(const Coord& c) const{
-                return std::abs(first - c.first) - std::abs(second - c.second);
+                return std::abs(first - c.first) + std::abs(second - c.second);
             };
 };
 
@@ -20,7 +20,7 @@ enum Dir{
     RIGHT,
     LEFT,
     BODY,
-    NONE,
+    NO,
 };
 
 

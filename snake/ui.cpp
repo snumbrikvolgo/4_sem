@@ -2,6 +2,8 @@
 
 #include "ui.h"
 #include "tui.h"
+#include "key.h"
+#include "game.h"
 
 Ui* Ui::instance;
 
