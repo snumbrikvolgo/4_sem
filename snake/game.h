@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <list>
 #include <utility>
@@ -24,15 +25,15 @@ enum Dir{
 
 
 class Game;
+
 class Snake{
 public:
 
         explicit Snake();
         Snake(const Snake& s):dir(s.dir), body(s.body){}
-        //Snake& operator=(const Snake&) = delete;
 
-        Coord next(Dir d, Coord a);
-        void move(std::list<Coord>& rabbits);
+        Coord NextPosition(Dir d, Coord a);
+        void move();
 
         Snake& operator=(const Snake & s){
         dir = s.dir;
@@ -56,13 +57,13 @@ struct Segment : Coord {
         int brand;
         Dir dir;
 };
-struct Rabbit: Coord, std::optional<int>{
-        Rabbit(const Coord& c, const std::optional<int>& d = std::nullopt)
-            :Coord(c), std::optional<int>(d) {}
-};
+// struct Rabbit: Coord, std::optional<int>{
+//         Rabbit(const Coord& c, const std::optional<int>& d = std::nullopt)
+//             :Coord(c), std::optional<int>(d) {}
+// };
 
 using SnakePainter = std::function<void(Coord, Dir)>;
-using RabbbitPainter = std::function<void(Coord)>;
+using RabbitPainter = std::function<void(Coord)>;
 
 class Game {
 public:
@@ -73,9 +74,9 @@ public:
     };
 
     Game();
-    void add(Snake& s);
+    void add(Snake* s);
     void move();
-    void paint();
+    void paint(SnakePainter ps, RabbitPainter pr);
 
     void rabbitgenerate();
     bool checkplace(Coord c);
@@ -84,16 +85,11 @@ public:
     Coord GetFreeCoord();
     void KillRabbit(Coord c);
 
-    Coord randxy();
-
-    bool is_clear(Coord, bool skip_rabbits = false);
-    std::optional<Coord> rabbit_near(Coord);
-
-
     static Game * get();
     static Game * inst;
+
 private:
 
-        std:: list<std::reference_wrapper<Snake>> snakes;
-        std::list<Coord> rabbits;
+    std::list<Snake*> snakes;
+    std::list<Coord>  rabbits;
 };

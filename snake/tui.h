@@ -20,13 +20,11 @@ public:
   //void on_key(event_fn fn);
   //void on_timer(int t, timer_fn fn);
 
-  void painter(const Segment&);
-  void painter(const Rabbit&);
+  void snakepainter(const Coord& s, const Dir& d);
+  void rabbitpainter(const Coord&);
   void painter(int brand, int score);
 
   void draw();
-
-public:
   void cls(); //
 
   void putc(int x, int y, char c); //
@@ -40,7 +38,7 @@ public:
   // terminal
   //void init_tty(int echo);
   //void fini_tty();
-  void winch(); //windowchange
+  void winch();
   //static void handler(int a = 0);
 
 private:

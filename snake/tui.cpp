@@ -6,6 +6,10 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 
+
+
+using namespace std::placeholders;
+
 static void handler(int a) {
     Ui::get() -> draw();
 }
@@ -23,7 +27,6 @@ void Tty::winch()
 Tty::Tty()
 {
   cls();
-  std::cout << "HHUUUI\n" << std::endl;
   winch();
   //signal(SIGWINCH, handler);
   struct sigaction sa;
@@ -33,11 +36,11 @@ Tty::Tty()
 
   struct termios a;
   tcgetattr(0, &a);
-      old = a;
-    cfmakeraw(&a);
+  old = a;
+  cfmakeraw(&a);
 
     //int x = View::get()->x;
-    tcsetattr(0, TCSAFLUSH, &a);
+  tcsetattr(0, TCSAFLUSH, &a);
 
   //printf("%d %d\n", winx(), winy());
   //setvbuf(stdout, NULL, _IONBF, 0);
@@ -47,8 +50,6 @@ Tty::~Tty()
 {
   tcgetattr(TCSAFLUSH, &old);
   cls();
-  //fini_tty();
-  //setvbuf(stdout, NULL, _IOLBF, 0);
   printf("bye!\n");
 }
 
@@ -95,15 +96,15 @@ void Tty::painter(int brand, int score)
     gotoxy(0,0);
 }
 
-void Tty::painter(const Segment& s)
+void Tty::snakepainter(const Coord& s, const Dir& d)
 {
-    setcolor(s.brand);
-    putc(s.first, s.second, "^v><#"[s.dir]);
+    //setcolor(s.brand);
+    putc(s.first, s.second, "^v><#"[d]);
     setcolor(0);
     gotoxy(0,0);
 }
 
-void Tty::painter(const Rabbit& s)
+void Tty::rabbitpainter(const Coord& s)
 {
     putc(s.first, s.second, '@');
     setcolor(0);
@@ -116,22 +117,26 @@ void Tty::draw()
     cls();
     vline(0,0,winy());
     hline(0,0, winx());
-    Coord r;
-    r.first = 5;
-    r.second  = 6;
-
-    //struct Rabbit rab (r);
-    painter(r);
-    r.first = 10;
-    r.second  = 17;
-    Segment f(r, 5, LEFT );
-    painter(f);
+    // Coord r;
+    // r.first = 5;
+    // r.second  = 6;
+    //
+    // //struct Rabbit rab (r);
+    // painter(r);
+    // r.first = 10;
+    // r.second  = 17;
+    // Segment f(r, 5, UP);
+    // painter(f);
     vline(winx() - 1,0,winy());
     hline(0,winy() - 1, winx());
     //printf("\e[1m\e[%d;%dH\e[31mR\e[33mA\e[32mI\e[36mN\e[34mB\e[35mO\e[37mW\e[37m!",
     //          winy()/2+1, winx()/2-3);
     gotoxy(3,0);
     printf(" Score: ");
+
+    gotoxy(winx()/2, winy()/2);
+
+    game->paint(std::bind(&Ui::snakepainter, this, _1, _2), std::bind(&Ui::rabbitpainter, this, _1));
     //game -> paint();
     fflush(stdout);
 }
@@ -143,5 +148,66 @@ void Tty::putc(int x, int y, char c)
 }
 void Tty::run()
 {
+    char c;
     draw();
+
+    struct pollfd arr;
+   struct timespec start_time, finish_time, worktime;
+   while(1)
+    {
+        arr.fd = 0 ;
+        arr.events = POLLIN;
+
+        clock_gettime(CLOCK_REALTIME,  &start_time);
+        int n = poll(&arr, 1, (int)ontime_deligater.front().first);
+        clock_gettime(CLOCK_REALTIME,  &finish_time);
+
+        if(n == 1) {
+            //printf("onkey\n");
+            read(arr.fd, &c, 1);
+            gotoxy(winx()/2, winy()/2);
+            if(c == 'q')    return;
+
+            //onkey_delegater->onkey(c);
+        }
+
+        worktime.tv_sec = finish_time.tv_sec - start_time.tv_sec;
+        worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
+        int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
+        //ontime_deligater.front().first -= d;
+
+        //printf("time = %d\n", ontime_deligater.first);
+        //int i;
+        //scanf("%d", &i);
+
+
+        for(int i = 0; i < ontime_deligater.size(); i ++) {
+            std::pair<long, timeontable> a = ontime_deligater.front();
+            ontime_deligater.pop_front();
+            a.first -= d;
+            ontime_deligater.push_back(a);
+        }
+
+        for(int i = 0; i < ontime_deligater.size(); i ++) {
+            std::pair<long, timeontable> a = ontime_deligater.front();
+            ontime_deligater.pop_front();
+
+            if(a.first <= 0) {
+                a.second();
+            }
+
+            else ontime_deligater.push_back(a);
+        }
+
+        /*if(ontime_deligater.front().first == 500)
+        {
+
+        }*/
+
+
+    }
+
+
+
+
 }
