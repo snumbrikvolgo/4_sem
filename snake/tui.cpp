@@ -38,25 +38,19 @@ Tty::Tty()
   tcgetattr(0, &a);
   old = a;
   cfmakeraw(&a);
-
-    //int x = View::get()->x;
   tcsetattr(0, TCSAFLUSH, &a);
-
-  //printf("%d %d\n", winx(), winy());
-  //setvbuf(stdout, NULL, _IONBF, 0);
 }
 
 Tty::~Tty()
 {
-  tcgetattr(TCSAFLUSH, &old);
   cls();
-  printf("bye!\n");
+  printf("Pokedova!\n");
+  tcsetattr(0, TCSAFLUSH, &old);
 }
 
 void Tty::cls()
 {
   printf("\ec");
-  //printf("\e[H\e[J\e[m");
 }
 
 void Tty::gotoxy(int w, int h)
@@ -64,7 +58,7 @@ void Tty::gotoxy(int w, int h)
   printf("\e[%d;%dH", y - h, w+ 1);
 }
 
-void Tty::hline(int w, int h, int len) // horizontal line
+void Tty::hline(int w, int h, int len)
 {
     for(int i = w; i < w + len; ++i)
     {
@@ -73,7 +67,7 @@ void Tty::hline(int w, int h, int len) // horizontal line
     }
 }
 
-void Tty::vline(int w, int h, int len) // vertical line
+void Tty::vline(int w, int h, int len)
 {
     for(int i = h; i < h + len; ++i)
     {
@@ -134,10 +128,10 @@ void Tty::draw()
     gotoxy(3,0);
     printf(" Score: ");
 
+
     gotoxy(winx()/2, winy()/2);
 
     game->paint(std::bind(&Ui::snakepainter, this, _1, _2), std::bind(&Ui::rabbitpainter, this, _1));
-    //game -> paint();
     fflush(stdout);
 }
 
@@ -174,12 +168,6 @@ void Tty::run()
         worktime.tv_sec = finish_time.tv_sec - start_time.tv_sec;
         worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
         int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
-        //ontime_deligater.front().first -= d;
-
-        //printf("time = %d\n", ontime_deligater.first);
-        //int i;
-        //scanf("%d", &i);
-
 
         for(int i = 0; i < ontime_deligater.size(); i ++) {
             std::pair<long, timeontable> a = ontime_deligater.front();
@@ -198,16 +186,5 @@ void Tty::run()
 
             else ontime_deligater.push_back(a);
         }
-
-        /*if(ontime_deligater.front().first == 500)
-        {
-
-        }*/
-
-
     }
-
-
-
-
 }
