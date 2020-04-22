@@ -43,6 +43,8 @@ public:
         Dir dir;
         int brand;
         std::list<Coord> body;
+
+        int snake_score;
 protected:
 };
 
@@ -52,13 +54,10 @@ struct Segment : Coord {
         int brand;
         Dir dir;
 };
-// struct Rabbit: Coord, std::optional<int>{
-//         Rabbit(const Coord& c, const std::optional<int>& d = std::nullopt)
-//             :Coord(c), std::optional<int>(d) {}
-// };
 
-using SnakePainter = std::function<void(Coord, Dir)>;
+using SnakePainter  = std::function<void(Coord, Dir, int)>;
 using RabbitPainter = std::function<void(Coord)>;
+using ScorePainter  = std::function<void(int, int)>;
 
 class Game {
 public:
@@ -70,7 +69,7 @@ public:
     Game();
     void add(Snake* s);
     void move();
-    void paint(SnakePainter ps, RabbitPainter pr);
+    void paint(SnakePainter ps, RabbitPainter pr, ScorePainter psc);
 
     void rabbit_generate();
     bool check_place(Coord c);
@@ -81,6 +80,7 @@ public:
 
     static Game * get();
     static Game * inst;
+    static int snake_number;
 
 private:
 

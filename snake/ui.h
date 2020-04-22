@@ -49,7 +49,7 @@ public:
         ontime_delegater.push_back(n);
     }
 
-  virtual void snakepainter(const Coord& s, const Dir& d) = 0;
+  virtual void snakepainter(const Coord& s, const Dir& d, int color) = 0;
   virtual void rabbitpainter(const Coord&) = 0;
   // score
   virtual void painter(int, int) = 0;

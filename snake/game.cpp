@@ -3,10 +3,11 @@
 #include "AI.h"
 #include <iostream>
 
-#define RABIT_TIME 15
-#define SNAKE_TIME 400000000
+#define RABIT_TIME 5
+#define SNAKE_TIME 300000000
 
-Game * Game::inst;
+Game* Game::inst;
+int Game::snake_number;
 
 Game * Game::get()
 {
@@ -16,14 +17,17 @@ Game * Game::get()
     return Game::inst;
 }
 
-void Game::paint(SnakePainter ps, RabbitPainter pr)
+void Game::paint(SnakePainter ps, RabbitPainter pr, ScorePainter psc)
 {
     for(const auto s : snakes) {
+        //std::cerr << s -> brand  << " snwk brand"<< std::endl;
         bool head = false;
-        for(const auto & c : s->body) {
-            ps(c, head ? BODY : s->dir);
+
+        for(const auto & c : s -> body) {
+            ps(c, head ? BODY : s -> dir, s->brand);
             head = true;
         }
+        psc(s -> snake_score, s -> brand);
     }
 
     for(const auto & r : rabbits) {
@@ -37,8 +41,8 @@ Game::Game()
     struct timespec t;
 
     for(int i = 0; i < MAX_RABBITS; i ++) {
-    rabbit_generate();
-    Ui::get()->ontime_delegater.pop_back();
+        rabbit_generate();
+        Ui::get()->ontime_delegater.pop_back();
     }
 
     t = {0, SNAKE_TIME};
@@ -47,30 +51,35 @@ Game::Game()
     t = {RABIT_TIME, 0};
     v->set_on_timer(t, std::bind(&Game::rabbit_generate, this));
 
+    snake_number = 0;
+
 }
 
 void Game::add(Snake* s)
 {
+    //std::cerr<< s->brand << " snake color in add" << std::endl;
+    s -> brand = snake_number;
     snakes.push_back(s);
+    snake_number++;
 }
 
 Coord Game::get_free_coord()
 {
     Coord c;
-        while(1)
-        {
+    while(1)
+    {
         c.first  = rand() % Ui::get()->winx();
         c.second = rand() % Ui::get()->winy();
 
-        if(c.first  == 0 || c.first  == 1)    c.first  += 5;// worktime.tv_nsec % rand() % Ui::get()->x;
-        if(c.second == 0 || c.second == 1)    c.second += 5;// worktime.tv_nsec % Ui::get()->y;
+        if(c.first  == 0 || c.first  == 1)    c.first  += 5;
+        if(c.second == 0 || c.second == 1)    c.second += 5;
 
         if(c.first  == Ui::get()->winx() - 1)     c.first  -= 5;
         if(c.second == Ui::get()->winy() - 1)     c.second -= 5;
 
         if(check_place(c)) {
             return c;
-        }
+            }
     }
 }
 
@@ -104,17 +113,16 @@ Snake::Snake()
 {
     alive = true;
     dir = DOWN;
-    brand = 0;
+    //brand = 10;
 
     Coord c = Game::get() -> get_free_coord();
-    // Coord c;
-    // c.first = 5;
-    // c.second  = 6;
 
-    //std::cout<< Game::get() << std::endl;
      body.push_back(Coord(++c.first, c.second));
      body.push_back(Coord(++c.first, c.second));
      body.push_back(Coord(++c.first, c.second));
+
+     std::freopen( "error.txt", "wr", stderr );
+     std::cerr << brand  << " kek"<< std::endl;
 
 }
 
@@ -175,15 +183,12 @@ Coord Snake::next_position(Dir d, Coord a)
 
         default:
             break;
-
-
     }
     return a;
 }
 
 Coord Game::nearest_rabbit(Coord c)
 {
-
     if(rabbits.size() == 0) return Coord(0, 0);
 
     Coord rab(0, 0);
@@ -209,7 +214,6 @@ char Game::check_place_snake(Coord c)
     for(const auto & r : rabbits)
         if(c == r)
         {
-            //rabbits.remove(r);
             return 'r';
         }
 
@@ -240,6 +244,7 @@ void Snake::move()
         case 'r':
         {
             Game::get()->kill_rabbit(a);
+            //snake_score++;
             body.push_front(a);
             break;
         }
