@@ -140,8 +140,9 @@ void Tty::putc(int x, int y, char c)
     gotoxy(x,y);
     putchar(c);
 }
-void Tty::run()
+void Tty::run(Game* g)
 {
+    game = g;
     char c;
     draw();
 
@@ -153,7 +154,7 @@ void Tty::run()
         arr.events = POLLIN;
 
         clock_gettime(CLOCK_REALTIME,  &start_time);
-        int n = poll(&arr, 1, (int)ontime_deligater.front().first);
+        int n = poll(&arr, 1, (int)ontime_delegater.front().first);
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         if(n == 1) {
@@ -169,22 +170,22 @@ void Tty::run()
         worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
         int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
 
-        for(int i = 0; i < ontime_deligater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_deligater.front();
-            ontime_deligater.pop_front();
+        for(uint i = 0; i < ontime_delegater.size(); i ++) {
+            std::pair<long, timeontable> a = ontime_delegater.front();
+            ontime_delegater.pop_front();
             a.first -= d;
-            ontime_deligater.push_back(a);
+            ontime_delegater.push_back(a);
         }
 
-        for(int i = 0; i < ontime_deligater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_deligater.front();
-            ontime_deligater.pop_front();
+        for(uint i = 0; i < ontime_delegater.size(); i ++) {
+            std::pair<long, timeontable> a = ontime_delegater.front();
+            ontime_delegater.pop_front();
 
             if(a.first <= 0) {
                 a.second();
             }
 
-            else ontime_deligater.push_back(a);
+            else ontime_delegater.push_back(a);
         }
     }
 }

@@ -15,7 +15,7 @@ public:
   int winx() const { return x; }
   int winy() const { return y; }
 
-  void run();
+  void run(Game* g);
   //void quit();
 
   //void on_key(event_fn fn);

@@ -6,8 +6,9 @@
 
 Human::Human(Snake* s): Control(s)
 {
+    s -> brand = 3;
     Ui* v = Ui::get();
-    v->setonkey(this);
+    v->set_on_key(this);
 }
 
 
@@ -18,8 +19,6 @@ Human::~Human()
 
 void Human::onkey(char key)
 {
-    //Game * g = Game::get();
-
     switch (key) {
         case 'a':
             if(snake->dir == LEFT)  break;

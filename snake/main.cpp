@@ -9,7 +9,6 @@
 #include "AI.h"
 
 int main() {
-
   srand(time(NULL));
 
   std::unique_ptr<Ui> v(Ui::get("tty"));
@@ -21,20 +20,12 @@ int main() {
   Game * g = Game::get();
   Snake* s = new Snake();
   Human h(s);
+
   Snake * s2 = new Snake();
   AI ai(s2);
 
-  g ->add(s);
-  g->add(s2);
-  //g -> add(s);
-  v -> set_model(g);
-  v -> run();
-
- // while(1);
-
-  //Human h(g);
-  //Robot s1(g), s2(g), s3(g);
-
-  //v->run(g);
-
+  g -> add(s);
+  g -> add(s2);
+  //v -> set_model(g);
+  v -> run(g);
 }
