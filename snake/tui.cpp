@@ -90,7 +90,7 @@ void Tty::painter(int score, int brand)
 
 void Tty::snakepainter(const Coord& s, const Dir& dir, int color)
 {
-    std::cerr << color  << " color"<< std::endl;
+    //std::cerr << color  << " color"<< std::endl;
     setcolor(color);
     putc(s.first, s.second, "^v><#"[dir]);
     setcolor(0);
@@ -100,7 +100,6 @@ void Tty::snakepainter(const Coord& s, const Dir& dir, int color)
 void Tty::rabbitpainter(const Coord& s)
 {
     putc(s.first, s.second, '@');
-
     setcolor(0);
     gotoxy(0,0);
 }
@@ -111,13 +110,10 @@ void Tty::draw()
     cls();
     vline(0,0,winy());
     hline(0,0, winx());
-
     vline(winx() - 1,0,winy());
     hline(0,winy() - 1, winx());
-
     gotoxy(3,0);
     printf(" Score: ");
-
 
     gotoxy(winx()/2, winy()/2);
     game->paint(std::bind(&Ui::snakepainter, this, _1, _2, _3), std::bind(&Ui::rabbitpainter, this, _1), std::bind(&Ui::painter, this, _1, _2));
@@ -136,8 +132,8 @@ void Tty::run(Game* g)
     draw();
 
     struct pollfd arr;
-   struct timespec start_time, finish_time, worktime;
-   while(1)
+    struct timespec start_time, finish_time, worktime;
+    while(1)
     {
         arr.fd = 0 ;
         arr.events = POLLIN;
@@ -147,7 +143,6 @@ void Tty::run(Game* g)
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         if(n == 1) {
-            //printf("onkey\n");
             read(arr.fd, &c, 1);
             gotoxy(winx()/2, winy()/2);
             if(c == 'q')    return;
@@ -163,6 +158,7 @@ void Tty::run(Game* g)
             std::pair<long, timeontable> a = ontime_delegater.front();
             ontime_delegater.pop_front();
             a.first -= d;
+
             ontime_delegater.push_back(a);
         }
 

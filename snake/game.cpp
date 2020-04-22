@@ -113,16 +113,15 @@ Snake::Snake()
 {
     alive = true;
     dir = DOWN;
-    //brand = 10;
 
     Coord c = Game::get() -> get_free_coord();
 
-     body.push_back(Coord(++c.first, c.second));
-     body.push_back(Coord(++c.first, c.second));
-     body.push_back(Coord(++c.first, c.second));
+    body.push_back(Coord(++c.first, c.second));
+    body.push_back(Coord(++c.first, c.second));
+    body.push_back(Coord(++c.first, c.second));
 
-     std::freopen( "error.txt", "wr", stderr );
-     std::cerr << brand  << " kek"<< std::endl;
+    //std::freopen( "error.txt", "wr", stderr );
+    //std::cerr << brand  << " kek"<< std::endl;
 
 }
 
@@ -244,7 +243,7 @@ void Snake::move()
         case 'r':
         {
             Game::get()->kill_rabbit(a);
-            //snake_score++;
+            snake_score++;
             body.push_front(a);
             break;
         }
@@ -273,7 +272,7 @@ bool Game::check_place(Coord c)
     for(const auto & r : rabbits)
         if(c == r) return false;
 
-    if(c.first >= 0 && c.first <= 1)    return false;
+    if(c.first >= 0 && c.first <= 1)     return false;
     if(c.second >= 0 && c.second <= 1)   return false;
 
     if(c.first >= Ui::get()->winx() - 1)     return false;
