@@ -4,5 +4,5 @@
 class Key
 {
 public:
-    virtual void onkey(char key) = 0;
+    virtual bool onkey(char key) = 0;
 };

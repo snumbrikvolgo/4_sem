@@ -2,6 +2,7 @@
 
 #include "ui.h"
 #include "tui.h"
+#include "gui.h"
 #include "key.h"
 #include "game.h"
 
@@ -11,8 +12,8 @@ Ui* Ui::get(const char* what) {
   if (!instance) {
     if (strcmp(what, "tty") == 0)
       instance = new Tty();
-    //if (strcmp(what, "sdl") == 0)
-      //instance = new Sdl();
+    if (strcmp(what, "gui") == 0)
+      instance = new Gui();
   }
   return instance;
 }

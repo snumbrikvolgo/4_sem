@@ -1,12 +1,17 @@
-CXX = g++
-CXXFLAGS = -Wall -std=c++17
-PROG = main
-PROG_OBJ = ui.o tui.o game.o control.o human.o AI.o main.o 
+OBJ= ui.o gui.o tui.o game.o control.o human.o AI.o main.o
+LIBS=-lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS += -std=c++11
+PROG=main
+CXX:=g++
 
-all:	$(PROG)
-$(PROG): $(PROG_OBJ)
-		$(CXX) $(CXXFLAGS) -o	$@ $^
-.o: .cpp
-		$(CXX) -c $^
+all:${PROG}
+
+%.o: %.cpp
+	$(CXX) ${CXXFLAGS} -c $< -o $@
+
+${PROG}:${OBJ}
+	${CXX} ${CXXFLAGS} ${OBJ} -o ${PROG} ${LIBS}
+
+
 clean:
-	rm -fv *.0 $(PROG_OBJ) $(PROG)
+	rm -fv *.0 $(OBJ) $(PROG)

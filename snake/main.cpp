@@ -6,6 +6,7 @@
 #include "control.h"
 #include "human.h"
 #include "tui.h"
+#include "gui.h"
 #include "AI.h"
 
 int main() {
@@ -26,6 +27,7 @@ int main() {
 
   g -> add(s);
   g -> add(s2);
-  //v -> set_model(g);
+  v -> set_model(g);
+  v -> draw();
   v -> run(g);
 }

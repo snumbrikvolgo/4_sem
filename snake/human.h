@@ -10,5 +10,5 @@ class Human : public Control, public Key
 public:
     Human(Snake* s);
     ~Human();
-    void onkey(char key);
+    bool onkey(char key);
 };

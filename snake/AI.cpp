@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <list>
-
 #include "AI.h"
 #include "ui.h"
 

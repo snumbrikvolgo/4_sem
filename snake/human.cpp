@@ -17,7 +17,7 @@ Human::~Human()
 }
 
 
-void Human::onkey(char key)
+bool Human::onkey(char key)
 {
     switch (key) {
         case 'a':
