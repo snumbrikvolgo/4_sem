@@ -8,7 +8,7 @@ public:
     AI(Snake * s);
     ~AI();
 
-    void OnMove();
+    void on_move();
 
     Snake * snake;
 };

@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <list>
 #include <utility>
@@ -23,32 +22,30 @@ enum Dir{
     NO,
 };
 
-
 class Game;
 
 class Snake{
 public:
-
         explicit Snake();
         Snake(const Snake& s):dir(s.dir), body(s.body){}
 
-        Coord NextPosition(Dir d, Coord a);
+        Coord next_position(Dir d, Coord a);
         void move();
 
         Snake& operator=(const Snake & s){
-        dir = s.dir;
-        body = s.body;
-        return * this;
+            dir = s.dir;
+            body = s.body;
+            return * this;
         }
         void set_direction(Dir d);
 
         bool alive;
-        //bool stopped;
         Dir dir;
         int brand;
         std::list<Coord> body;
+
+        int snake_score;
 protected:
-        //Game& game;
 };
 
 struct Segment : Coord {
@@ -57,36 +54,33 @@ struct Segment : Coord {
         int brand;
         Dir dir;
 };
-// struct Rabbit: Coord, std::optional<int>{
-//         Rabbit(const Coord& c, const std::optional<int>& d = std::nullopt)
-//             :Coord(c), std::optional<int>(d) {}
-// };
 
-using SnakePainter = std::function<void(Coord, Dir)>;
+using SnakePainter  = std::function<void(Coord, Dir, int)>;
 using RabbitPainter = std::function<void(Coord)>;
+using ScorePainter  = std::function<void(int, int)>;
 
 class Game {
 public:
     enum {
-        TICK = 500, //milliseconds game tick
         RABBITS_CHANCE = 20,
-        MAX_RABBITS = 10,
+        MAX_RABBITS = 20,
     };
 
     Game();
     void add(Snake* s);
     void move();
-    void paint(SnakePainter ps, RabbitPainter pr);
+    void paint(SnakePainter ps, RabbitPainter pr, ScorePainter psc);
 
-    void rabbitgenerate();
-    bool checkplace(Coord c);
-    char checkplacesnake(Coord c);
-    Coord near(Coord c);
-    Coord GetFreeCoord();
-    void KillRabbit(Coord c);
+    void rabbit_generate();
+    bool check_place(Coord c);
+    char check_place_snake(Coord c);
+    Coord nearest_rabbit(Coord c);
+    Coord get_free_coord();
+    void kill_rabbit(Coord c);
 
     static Game * get();
     static Game * inst;
+    static int snake_number ;
 
 private:
 

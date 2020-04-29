@@ -15,13 +15,13 @@ public:
   int winx() const { return x; }
   int winy() const { return y; }
 
-  void run();
+  void run(Game* g);
   //void quit();
 
   //void on_key(event_fn fn);
   //void on_timer(int t, timer_fn fn);
 
-  void snakepainter(const Coord& s, const Dir& d);
+  void snakepainter(const Coord& s, const Dir& dir, int color);
   void rabbitpainter(const Coord&);
   void painter(int brand, int score);
 
