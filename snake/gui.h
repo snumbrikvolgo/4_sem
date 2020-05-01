@@ -51,7 +51,7 @@ private:
     sf::Texture t_bort;
     sf::Texture t_body;
     sf::Texture t_head;
-    sf::Texture t_apple;
+    sf::Texture t_mush;
     sf::Texture t_head_l;
 
     sf::Texture t_head_h;
@@ -62,7 +62,7 @@ private:
     sf::Sprite bort;
     sf::Sprite body;
     sf::Sprite head;
-    sf::Sprite apple;
+    sf::Sprite mush;
     sf::Sprite head_l;
 
     sf::Sprite head_h;

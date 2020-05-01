@@ -44,8 +44,8 @@ Gui::Gui()
     t_body.loadFromFile("./images/body.png");
     body.setTexture(t_body);
 
-    t_apple.loadFromFile("./images/mush.png");
-    apple.setTexture(t_apple);
+    t_mush.loadFromFile("./images/mush.png");
+    mush.setTexture(t_mush);
 
     t_head_h.loadFromFile("./images/HH.png");
     head_h.setTexture(t_head_h);
@@ -64,8 +64,8 @@ Gui::~Gui()
 }
 void Gui::rabbitpainter(const Coord& c)
 {
-    apple.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
-    window.draw(apple);
+    mush.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+    window.draw(mush);
 }
 
 void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
