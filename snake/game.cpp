@@ -141,7 +141,8 @@ void Game::move()
         Ui::get()->~Ui();
     }
 
-    Ui::get()->AI_delegater->on_move();
+    Ui::get()->AI_delegater->on_move_dumb();
+    Ui::get()->AI_delegater_clever->on_move_clever();
 
     for(auto s: snakes)
         if(s->alive)

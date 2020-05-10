@@ -49,10 +49,12 @@ private:
 
     sf::Texture t_ground;
     sf::Texture t_bort;
+
     sf::Texture t_body;
     sf::Texture t_head;
     sf::Texture t_mush;
     sf::Texture t_head_l;
+
 
     sf::Texture t_head_h;
     sf::Texture t_body_h;

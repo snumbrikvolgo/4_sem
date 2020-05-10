@@ -81,7 +81,7 @@ void Tty::setcolor(int c)
 
 void Tty::painter(int score, int brand)
 {
-    gotoxy(10*(brand + 1), 0);
+    gotoxy(8*(brand + 1), 0);
     setcolor(brand);
     printf(" %d ", score);
     setcolor(0);

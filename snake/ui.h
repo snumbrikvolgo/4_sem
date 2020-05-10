@@ -20,10 +20,13 @@ public:
 
   Key* onkey_delegater;
   AI * AI_delegater;
+  AI * AI_delegater_clever;
 
-  void set_on_AI(AI * ai)
+  void set_on_AI(AI * ai, char manner)
     {
-        AI_delegater = ai;
+        if (manner == 'd')
+            AI_delegater = ai;
+        else AI_delegater_clever = ai;
     }
 
   void set_on_key(Key* key)

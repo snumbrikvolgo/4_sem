@@ -243,7 +243,8 @@ void Gui::painter(int brand, int score)
 
     if (5 == score)
         text.setFillColor(sf::Color::Red);
-    else text.setFillColor(sf::Color::Green);
+    else if (8 == score)text.setFillColor(sf::Color::Green);
+    else text.setFillColor(sf::Color::White);
 
     std::ostringstream p;
     p << brand;
