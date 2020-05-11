@@ -49,16 +49,18 @@ private:
 
     sf::Texture t_ground;
     sf::Texture t_bort;
-
     sf::Texture t_body;
     sf::Texture t_head;
     sf::Texture t_mush;
     sf::Texture t_head_l;
 
-
     sf::Texture t_head_h;
     sf::Texture t_body_h;
     sf::Texture t_head_l_h;
+
+    sf::Texture t_head_2;
+    sf::Texture t_body_2;
+    sf::Texture t_head_l_2;
 
     sf::Sprite ground;
     sf::Sprite bort;
@@ -70,6 +72,10 @@ private:
     sf::Sprite head_h;
     sf::Sprite body_h;
     sf::Sprite head_l_h;
+
+    sf::Sprite head_2;
+    sf::Sprite body_2;
+    sf::Sprite head_l_2;
 
 
     sf::Font font;

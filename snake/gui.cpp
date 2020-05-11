@@ -55,6 +55,15 @@ Gui::Gui()
 
     t_body_h.loadFromFile("./images/HB.png");
     body_h.setTexture(t_body_h);
+
+    t_head_2.loadFromFile("./images/head2.png");
+    head_2.setTexture(t_head_2);
+
+    t_head_l_2.loadFromFile("./images/head_l2.png");
+    head_l_2.setTexture(t_head_l_2);
+
+    t_body_2.loadFromFile("./images/body2.png");
+    body_2.setTexture(t_body_2);
 }
 
 Gui::~Gui()
@@ -77,10 +86,16 @@ void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
                 head_h.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_h);
             }
-            else {
+            else if (color == 7)
+            {
                 head.setTextureRect(sf::IntRect(0, 0, 30, 30));
                 head.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head);
+            }
+            else {
+                head_2.setTextureRect(sf::IntRect(0, 0, 30, 30));
+                head_2.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+                window.draw(head_2);
             }
             return;
 
@@ -90,10 +105,16 @@ void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
                 head_h.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_h);
             }
-            else {
+            else if (color == 7)
+            {
                 head.setTextureRect(sf::IntRect(0, 30, 30, -30));
                 head.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head);
+            }
+            else {
+                head_2.setTextureRect(sf::IntRect(0, 30, 30, -30));
+                head_2.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+                window.draw(head_2);
             }
             return;
 
@@ -103,10 +124,16 @@ void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
                 head_l_h.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_l_h);
             }
-            else {
+            else if (color == 7)
+            {
                 head_l.setTextureRect(sf::IntRect(0, 0, 30, 30));
                 head_l.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_l);
+            }
+            else {
+                head_l_2.setTextureRect(sf::IntRect(0, 0, 30, 30));
+                head_l_2.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+                window.draw(head_l_2);
             }
             return;
 
@@ -116,10 +143,16 @@ void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
                 head_l_h.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_l_h);
             }
-            else {
+            else if (color == 7)
+            {
                 head_l.setTextureRect(sf::IntRect(30, 0, -30, 30));
                 head_l.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(head_l);
+            }
+            else {
+                head_l_2.setTextureRect(sf::IntRect(30, 0, -30, 30));
+                head_l_2.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+                window.draw(head_l_2);
             }
             return;
 
@@ -128,9 +161,14 @@ void Gui::snakepainter(const Coord& c, const Dir& dir, int color)
                 body_h.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(body_h);
             }
-            else {
+            else if (color == 7)
+            {
                 body.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
                 window.draw(body);
+            }
+            else {
+                body_2.setPosition(c.first * CELL_SIZE, c.second * CELL_SIZE);
+                window.draw(body_2);
             }
             return;
     }
@@ -243,8 +281,9 @@ void Gui::painter(int brand, int score)
 
     if (5 == score)
         text.setFillColor(sf::Color::Red);
-    else if (8 == score)text.setFillColor(sf::Color::Green);
-    else text.setFillColor(sf::Color::White);
+    else if (score == 7)
+        text.setFillColor(sf::Color::Green);
+    else text.setFillColor(sf::Color::Blue);
 
     std::ostringstream p;
     p << brand;

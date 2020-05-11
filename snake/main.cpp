@@ -13,7 +13,7 @@
 int main() {
   srand(time(NULL));
 
-  std::unique_ptr<Ui> v(Ui::get("tty"));
+  std::unique_ptr<Ui> v(Ui::get("gui"));
   if (!v) {
     fprintf(stderr, "Cannot init UI\n");
     return 0;
