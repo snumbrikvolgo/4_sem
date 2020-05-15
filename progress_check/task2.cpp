@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
             }, string);
 
             auto fut2 = async(std::launch::async,[&fut1](char* string){
-            return write(1, string, fut1.get());
+            return write(1, string, MAX_OUT);
             }, string);
         }
     }
@@ -60,8 +60,6 @@ void show_file (char* name)
 	char string[MAX_STRING];
 	int n = 0;
 
-    //printf("strlen %d\n", strlen(string));
-
 	while (symbols < sz)
 	{  //std::future<int>
         auto fut1 = async(std::launch::async,[](char* string, int fd){
@@ -74,21 +72,24 @@ void show_file (char* name)
             //else return static_cast<long> (0);
 
         }, string, fd);
-        int res = static_cast<int>(fut1.get());
-		symbols += static_cast<int>(res);
 
-        std::cout << symbols << std::endl;
+
+        //std::cout << symbols << std::endl;
         //printf("strlen %d\n", strlen(string));
-        auto fut2 = async(std::launch::async,[&fut1](char* string, int res){
-            std::cout << strlen(string) << std::endl;
+        auto fut2 = async(std::launch::async,[&fut1](char* string){
             //if (strlen(string) > HIGH*MAX_STRING/100)
             {
+                printf("strlen %d\n", strlen(string));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 //printf("TRUE\n" );
-                return write(1, string, res);
+                return write(1, string, MAX_OUT);
             }
             //else
             //return static_cast<long> (0);
-        }, string, res);
+        }, string);
+
+        int res = static_cast<int>(fut1.get());
+		symbols += static_cast<int>(res);
 	}
 
 	if (fd < 0)
