@@ -2,6 +2,7 @@
 #include "ui.h"
 #include "AI.h"
 #include <iostream>
+#include <tuple>
 
 #define RABIT_TIME 5
 #define SNAKE_TIME 300000000
@@ -20,7 +21,6 @@ Game * Game::get()
 void Game::paint(SnakePainter ps, RabbitPainter pr, ScorePainter psc)
 {
     for(const auto s : snakes) {
-        //std::cerr << s -> brand  << " snwk brand"<< std::endl;
         bool head = false;
 
         for(const auto & c : s -> body) {
@@ -40,27 +40,30 @@ Game::Game()
     Ui* v = Ui::get();
     struct timespec t;
 
+    printf("GAME BORN\n" );
+
     for(int i = 0; i < MAX_RABBITS; i ++) {
         rabbit_generate();
-        Ui::get()->ontime_delegater.pop_back();
+        //printf("RABBIT GEN BORN\n" );
+        //Ui::get()->ontime_delegater.pop_back();
     }
 
     t = {0, SNAKE_TIME};
-    v->set_on_timer(t, std::bind(&Game::move, this));
+    v->set_on_timer(t, t,std::bind(&Game::move, this));
 
     t = {RABIT_TIME, 0};
-    v->set_on_timer(t, std::bind(&Game::rabbit_generate, this));
-
-    snake_number = 0;
+    v->set_on_timer(t, t, std::bind(&Game::rabbit_generate, this));
+    printf("TIMERS SIZE %d", v -> ontime_delegater.size());
+    snake_number = 5;
 
 }
 
 void Game::add(Snake* s)
 {
-    //std::cerr<< s->brand << " snake color in add" << std::endl;
     s -> brand = snake_number;
     snakes.push_back(s);
     snake_number++;
+    printf("SNAKE ADDED\n");
 }
 
 Coord Game::get_free_coord()
@@ -90,7 +93,7 @@ void Game::rabbit_generate()
 
     struct timespec t;
     t = {RABIT_TIME, 0};
-    Ui::get()->set_on_timer(t, std::bind(&Game::rabbit_generate, this));
+    //Ui::get()->set_on_timer(t, std::bind(&Game::rabbit_generate, this));
 
     while(1) {
         c.first  = rand() % Ui::get()->winx();
@@ -128,7 +131,7 @@ Snake::Snake()
 void Game::move()
 {
     bool all_die = true;
-
+    //printf("GAME MOVE\n" );
     for(auto s: snakes)
         if(s->alive)
         {
@@ -141,7 +144,8 @@ void Game::move()
         Ui::get()->~Ui();
     }
 
-    Ui::get()->AI_delegater->on_move();
+    Ui::get()->AI_delegater->on_move_dumb();
+    Ui::get()->AI_delegater_clever->on_move_clever();
 
     for(auto s: snakes)
         if(s->alive)
@@ -151,7 +155,7 @@ void Game::move()
 
     struct timespec t;
     t = {0, SNAKE_TIME};
-    Ui::get()->set_on_timer(t, std::bind(&Game::move, this));
+    //Ui::get()->set_on_timer(t, std::bind(&Game::move, this));
 }
 
 void Snake::set_direction(Dir d)

@@ -1,5 +1,6 @@
 #include <memory>
 #include <cstdio>
+#include <string>
 #include <iostream>
 #include "ui.h"
 #include "game.h"
@@ -23,10 +24,14 @@ int main() {
   Human h(s);
 
   Snake * s2 = new Snake();
-  AI ai(s2);
+  AI ai_2(s2, 'd');
+
+  Snake * s3 = new Snake();
+  AI ai_3(s3, 'c');
 
   g -> add(s);
   g -> add(s2);
+  g -> add(s3);
   v -> set_model(g);
   v -> draw();
   v -> run(g);

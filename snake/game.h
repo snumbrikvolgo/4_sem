@@ -80,7 +80,7 @@ public:
 
     static Game * get();
     static Game * inst;
-    static int snake_number;
+    static int snake_number ;
 
 private:
 

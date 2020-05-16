@@ -5,10 +5,11 @@
 class AI : public Control
 {
 public:
-    AI(Snake * s);
+    AI(Snake * s, char manner);
     ~AI();
 
-    void on_move();
+    void on_move_dumb();
+    void on_move_clever();
 
     Snake * snake;
 };

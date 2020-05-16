@@ -3,6 +3,7 @@
 #include "game.h"
 #include <poll.h>
 #include <time.h>
+#include <tuple>
 
 using timeontable = std::function<void()>;
 
@@ -20,10 +21,13 @@ public:
 
   Key* onkey_delegater;
   AI * AI_delegater;
+  AI * AI_delegater_clever;
 
-  void set_on_AI(AI * ai)
+  void set_on_AI(AI * ai, char manner)
     {
-        AI_delegater = ai;
+        if (manner == 'd')
+            AI_delegater = ai;
+        else AI_delegater_clever = ai;
     }
 
   void set_on_key(Key* key)
@@ -31,7 +35,12 @@ public:
        onkey_delegater = key;
    }
 
-  std::list <std::pair < long, timeontable>> ontime_delegater;
+  long make_time(struct timespec timeout)
+  {
+      return timeout.tv_nsec / 1000000 + timeout.tv_sec * 1000;
+  }
+  std::list <std::tuple<long, long, timeontable>> ontime_delegater;
+
   static Ui* get(const char* item = NULL);
 
   virtual int winx() const = 0;
@@ -41,12 +50,12 @@ public:
 
   virtual ~Ui() = 0;
 
-  void set_on_timer(struct timespec timeout, timeontable t)
+  void set_on_timer(struct timespec timeout, struct timespec probe, timeontable t)
     {
-        std::pair <long , timeontable> n;
-        n.first = timeout.tv_nsec / 1000000 + timeout.tv_sec * 1000;
-        n.second = t;
-        ontime_delegater.push_back(n);
+        long first = make_time(timeout);
+        long second = make_time(probe);
+
+        ontime_delegater.push_back(std::make_tuple(first,second,t));
     }
 
   virtual void snakepainter(const Coord& s, const Dir& d, int color) = 0;

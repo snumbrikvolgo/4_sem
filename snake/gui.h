@@ -21,9 +21,7 @@ public:
 
 
     sf::RenderWindow window;
-    //Keypressable * onkey_delegater;
 
-    //void snakepainter(Coord c, Dir d, Hum h);
     void rabbitpainter(const Coord& c);
     void snakepainter(const Coord& s, const Dir& dir, int color);
 
@@ -31,15 +29,16 @@ public:
     void run(Game* g);
 
     void setcolor(int color);
-    void gotoxy(int x, int y); //
+    void gotoxy(int x, int y);
 
-    void cls(); //
+
+    void cls();
     void winch();
 
     int winx() const { return x; }
     int winy() const { return y; }
 
-    bool getkey(long time);
+    int getkey(long time);
     void painter(int brand, int score);
 
     void Xline(int y);
@@ -52,23 +51,35 @@ private:
     sf::Texture t_bort;
     sf::Texture t_body;
     sf::Texture t_head;
-    sf::Texture t_apple;
+    sf::Texture t_mush;
     sf::Texture t_head_l;
 
     sf::Texture t_head_h;
     sf::Texture t_body_h;
     sf::Texture t_head_l_h;
 
+    sf::Texture t_head_2;
+    sf::Texture t_body_2;
+    sf::Texture t_head_l_2;
+
     sf::Sprite ground;
     sf::Sprite bort;
     sf::Sprite body;
     sf::Sprite head;
-    sf::Sprite apple;
+    sf::Sprite mush;
     sf::Sprite head_l;
 
     sf::Sprite head_h;
     sf::Sprite body_h;
     sf::Sprite head_l_h;
+
+    sf::Sprite head_2;
+    sf::Sprite body_2;
+    sf::Sprite head_l_2;
+
+
+    sf::Font font;
+    sf::Text text;
 };
 
 

@@ -81,7 +81,7 @@ void Tty::setcolor(int c)
 
 void Tty::painter(int score, int brand)
 {
-    gotoxy(10*(brand + 1), 0);
+    gotoxy(8*(brand + 1), 0);
     setcolor(brand);
     printf(" %d ", score);
     setcolor(0);
@@ -106,6 +106,7 @@ void Tty::rabbitpainter(const Coord& s)
 
 void Tty::draw()
 {
+    //printf("TTY DRAW\n");
     winch();
     cls();
     vline(0,0,winy());
@@ -127,6 +128,7 @@ void Tty::putc(int x, int y, char c)
 }
 void Tty::run(Game* g)
 {
+    printf("TTY DRAW\n" );
     game = g;
     char c;
     draw();
@@ -135,18 +137,18 @@ void Tty::run(Game* g)
     struct timespec start_time, finish_time, worktime;
     while(1)
     {
+
         arr.fd = 0 ;
         arr.events = POLLIN;
 
         clock_gettime(CLOCK_REALTIME,  &start_time);
-        int n = poll(&arr, 1, (int)ontime_delegater.front().first);
+        int n = poll(&arr, 1, (int)std::get<0>(ontime_delegater.front()));
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         if(n == 1) {
             read(arr.fd, &c, 1);
-            gotoxy(winx()/2, winy()/2);
             if(c == 'q')    return;
-
+            if(c == 'h')    return;
             onkey_delegater->onkey(c);
         }
 
@@ -154,23 +156,16 @@ void Tty::run(Game* g)
         worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
         int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
 
-        for(uint i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
-            a.first -= d;
-
-            ontime_delegater.push_back(a);
+        for(auto& a: ontime_delegater) {
+            std::get<0>(a) -= d;
         }
 
-        for(uint i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
+        for(auto& a: ontime_delegater) {
+            if(std::get<0>(a) <= 0) {
+                std::get<0>(a) = std::get<1>(a);
+                std::get<2>(a)();
 
-            if(a.first <= 0) {
-                a.second();
             }
-
-            else ontime_delegater.push_back(a);
         }
     }
 }
