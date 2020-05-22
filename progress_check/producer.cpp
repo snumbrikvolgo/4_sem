@@ -11,7 +11,7 @@
 using namespace std;
 
 #define CAP 1024*1024
-#define OUT 100
+#define OUT 4*1024
 
 
 long size_of_file(int text);
@@ -64,7 +64,9 @@ void show_file (char* name)
         int readen = 0;
         while(readen != sz)
         {
-            readen += buf.put(file_read);
+            int result = buf.put(file_read);
+            //printf("RESULT %d\n", result);
+            readen += result;
         }
 
     }, std::ref(buf), fd, sz);
@@ -75,7 +77,10 @@ void show_file (char* name)
         //printf("file_write %d\n", file_write );
         while(written != sz)
         {
-            written += buf.get(1);
+            int result = buf.get(1);
+            //printf("RESULT %d\n", result);
+
+            written += result;
         }
     }, std::ref(buf), fd, sz);
 

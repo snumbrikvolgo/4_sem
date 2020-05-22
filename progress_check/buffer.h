@@ -1,7 +1,7 @@
 #include <iostream>
 #pragma once
-#define CAPACITY 100
-#define OUT 100
+#define CAPACITY 1024*1024
+#define OUT 4*1024
 class Circular_buffer {
 public:
 	Circular_buffer() :
@@ -12,7 +12,7 @@ public:
 
 	int put(int fd)
 	{
-		std::lock_guard<std::mutex> lock(mutex_);
+		//std::lock_guard<std::mutex> lock(mutex_);
         //printf("I AM IN READ\n" );
 
         if (full_)
@@ -20,9 +20,12 @@ public:
             //wait for free
         }
 
-		int ch_read = read(fd, buffer_ + tail_, OUT);
-        tail_ = (tail_ + ch_read) % capacity_;
+        //printf("TAIL %d\n", tail_ );
 
+		int ch_read = read(fd, buffer_ + tail_, OUT);
+        mutex_.lock();
+        tail_ = (tail_ + ch_read) % capacity_;
+        mutex_.unlock();
 		// if(full_)
 		// {
 		// 	tail_ = (tail_ + 1) % capacity_;
@@ -36,16 +39,19 @@ public:
 
 	int get(int fd)
 	{
-		std::lock_guard<std::mutex> lock(mutex_);
-
+		//std::lock_guard<std::mutex> lock(mutex_);
+        int ch_write = 0;
 		if(empty())
 		{
 			//printf("EMPTY\n" );//return T();
             return 0;
 		}
-
-        int ch_write = write(fd, buffer_ + head_, OUT);
+        if (size() < OUT)
+            ch_write = write(fd, buffer_ + head_, size());
+        else ch_write = write(fd, buffer_ + head_, OUT);
+        mutex_.lock();
         head_ = (head_ + ch_write) % capacity_;
+        mutex_.unlock();
 		full_ = false;
 
         return ch_write;
