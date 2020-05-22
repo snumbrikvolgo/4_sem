@@ -16,31 +16,30 @@ public:
         almost_empty.second = almost_empty.first.get_future();
     }
 
-	int put(int fd)
+	int put(int fd, int sz)
 	{
-        mutex_.lock();
-		//std::lock_guard<std::mutex> lock(mutex_);
-        //printf("I AM IN READ\n" );
 
         if (size() == capacity_)
         {
+            printf("WRITE FULL\n");
             almost_empty.second.get();
 
             almost_empty.first = std::promise<int>();
             almost_empty.second = almost_empty.first.get_future();
         }
-        if (size() > 0.8*capacity_)
+        else if (size() > 0.8*capacity_)
+        {
+            printf("WRITE BIG\n");
+            almost_full.first.set_value(0);
+        }
+		int ch_read = read(fd, buffer_ + tail_, OUT);
+        if (ch_read == sz % capacity_)
         {
             almost_full.first.set_value(0);
-            //almost_full.
-            //wait for free
         }
-        //printf("TAIL %d\n", tail_ );
-
-		int ch_read = read(fd, buffer_ + tail_, OUT);
-
+        mutex_.lock();
         tail_ = (tail_ + ch_read) % capacity_;
-
+        mutex_.unlock();
 		// if(full_)
 		// {
 		// 	tail_ = (tail_ + 1) % capacity_;
@@ -49,7 +48,8 @@ public:
 		//head_ = (head_ + 1) % capacity_;
 
 		full_ = head_ == tail_;
-        mutex_.unlock();
+
+        //almost_full.first.set_value(0);
         return ch_read;
 
 	}
@@ -58,26 +58,31 @@ public:
 	{
 		//std::lock_guard<std::mutex> lock(mutex_);
         int ch_write = 0;
-        mutex_.lock();
 
-        if(size() < 0.2*capacity_)
-        {
-            almost_empty.first.set_value(0);
-        }
-		if(empty())
+        if(empty())
 		{
+            printf("GET EMPTY\n");
 			almost_full.second.get();
             almost_full.first = std::promise<int>();
             almost_full.second = almost_full.first.get_future();
 		}
+
+        else if(size() < 0.2*capacity_)
+            {
+                printf("GET ALMOST EMPTY\n");
+                almost_empty.first.set_value(0);
+            }
+        // if (sz % capacity_ < 0.8*capacity_){
+        //
+        // }
         if (size() < OUT)
             ch_write = write(fd, buffer_ + head_, size());
         else ch_write = write(fd, buffer_ + head_, OUT);
-
+        mutex_.lock();
         head_ = (head_ + ch_write) % capacity_;
-
-		full_ = false;
         mutex_.unlock();
+		full_ = false;
+
         return ch_write;
 	}
 
@@ -90,13 +95,11 @@ public:
 
 	bool empty() const
 	{
-		//if head and tail are equal, we are empty
 		return (!full_ && (head_ == tail_));
 	}
 
 	bool full() const
 	{
-		//If tail is ahead the head by 1, we are full
 		return full_;
 	}
 
@@ -128,8 +131,8 @@ char *buffer_;
 private:
     std::pair<std::promise<int>, std::future<int>> almost_full;
     std::pair<std::promise<int>, std::future<int>> almost_empty;
-
 	std::mutex mutex_;
+
 	size_t head_ = 0;
 	size_t tail_ = 0;
 	const size_t capacity_;

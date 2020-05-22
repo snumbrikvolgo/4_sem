@@ -37,6 +37,10 @@ int main(int argc, char* argv[])
     //         }, string);
     //     }
     // }
+    // if (argc == 1)
+    // {
+    //     show_file(0);
+    // }
 
     {
         for (int i = 1; i < argc; i++)
@@ -57,15 +61,11 @@ void show_file (char* name)
 
     Circular_buffer buf;
 
-    std::promise<int> pr_read;
-    std::future<int> fut_write = pr_read.get_future();
-
     std::thread thread_read([](Circular_buffer& buf, int file_read, int sz) {
         int readen = 0;
         while(readen != sz)
         {
-            int result = buf.put(file_read);
-            //printf("RESULT %d\n", result);
+            int result = buf.put(file_read, sz);
             readen += result;
         }
 
@@ -73,13 +73,9 @@ void show_file (char* name)
 
     std::thread thread_write([](Circular_buffer& buf, int file_write, int sz) {
         int written = 0;
-        //file_write = open("kek.cpp", O_CREAT);
-        //printf("file_write %d\n", file_write );
         while(written != sz)
         {
             int result = buf.get(1);
-            //printf("RESULT %d\n", result);
-
             written += result;
         }
     }, std::ref(buf), fd, sz);
