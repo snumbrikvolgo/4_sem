@@ -3,8 +3,8 @@
 #include <utility>
 #include <future>
 
-#define CAPACITY 1024*1024
-#define OUT 4*1024
+#define CAPACITY 32
+#define OUT 4
 
 class Circular_buffer {
 	public:
@@ -14,41 +14,33 @@ class Circular_buffer {
 		buffer_ = new char [CAPACITY];
 		almost_full.second = almost_full.first.get_future();
 		almost_empty.second = almost_empty.first.get_future();
+		read_live = true;
 	}
 
 		int put(int fd, int sz)
 		{
-
 			if (size() == capacity_)
 			{
-				printf("WRITE FULL\n");
+				//printf("WRITE FULL\n");
+				std::cout << "ББББwrite fullБББ" << std::endl;
 				almost_empty.second.get();
 
 				almost_empty.first = std::promise<int>();
 				almost_empty.second = almost_empty.first.get_future();
 			}
-			else if (size() > 0.8*capacity_)
+			else if (10*size() >= 8*capacity_)
 			{
-				printf("WRITE BIG\n");
+				//printf("№№№№№№№№№№№№№№№№№№33\nWRITE BIG\n\n");
+				std::cout << "ШШШwrite bigШШШ" << std::endl;
 				almost_full.first.set_value(0);
 			}
 			int ch_read = read(fd, buffer_ + tail_, OUT);
 
-			if (ch_read == sz % capacity_ || sz >= 0)
-			{
-				almost_full.first.set_value(0);
-			}
 			mutex_.lock();
 			tail_ = (tail_ + ch_read) % capacity_;
-			mutex_.unlock();
-			// if(full_)
-			// {
-			// 	tail_ = (tail_ + 1) % capacity_;
-			// }
-
-			//head_ = (head_ + 1) % capacity_;
-
 			full_ = head_ == tail_;
+			mutex_.unlock();
+
 
 			//almost_full.first.set_value(0);
 			return ch_read;
@@ -60,7 +52,7 @@ class Circular_buffer {
 			//std::lock_guard<std::mutex> lock(mutex_);
 			int ch_write = 0;
 
-			if(empty())
+			if(empty() && read_live)
 			{
 				printf("GET EMPTY\n");
 				almost_full.second.get();
@@ -68,22 +60,20 @@ class Circular_buffer {
 				almost_full.second = almost_full.first.get_future();
 			}
 
-			else if(size() < 0.2*capacity_)
+			else if(10*size() < 2*capacity_ && read_live)
 			{
 				printf("GET ALMOST EMPTY\n");
 				almost_empty.first.set_value(0);
 			}
-			// if (sz % capacity_ < 0.8*capacity_){
-			//
-			// }
 			if (size() < OUT)
 				ch_write = write(fd, buffer_ + head_, size());
 			else ch_write = write(fd, buffer_ + head_, OUT);
 
 			mutex_.lock();
 			head_ = (head_ + ch_write) % capacity_;
+		    full_ = false;
 			mutex_.unlock();
-			full_ = false;
+
 
 			return ch_write;
 		}
@@ -95,9 +85,9 @@ class Circular_buffer {
 			full_ = false;
 		}
 
-		bool empty() const
+		bool empty()
 		{
-			return (!full_ && (head_ == tail_) && size() == 0);
+			return (!full_ && (head_ == tail_) && (size() == 0));
 		}
 
 		bool full() const
@@ -110,8 +100,9 @@ class Circular_buffer {
 			return capacity_;
 		}
 
-		size_t size() const
+		size_t size()
 		{
+			mutex_.lock();
 			size_t size = capacity_;
 
 			if(!full_)
@@ -125,14 +116,16 @@ class Circular_buffer {
 					size = capacity_ + tail_ - head_;
 				}
 			}
-
+			mutex_.unlock();
 			return size;
 		}
 
 		char *buffer_;
-	private:
+		bool read_live = true;
 		std::pair<std::promise<int>, std::future<int>> almost_full;
 		std::pair<std::promise<int>, std::future<int>> almost_empty;
+	private:
+
 		std::mutex mutex_;
 
 		size_t head_ = 0;

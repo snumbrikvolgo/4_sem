@@ -11,10 +11,6 @@
 
 using namespace std;
 
-#define CAP 1024*1024
-#define OUT 4*1024
-
-
 long size_of_file(int text);
 void show_file (const char* name);
 
@@ -65,18 +61,16 @@ void show_file (const char* name)
 			int readen = 0;
 			while(readen != sz)
 			{
-			readen += buf.put(file_read, sz);
-			//readen += result;
+				readen += buf.put(file_read, sz);
 			}
-
+			buf.read_live = false;
 			}, std::ref(buf), fd, sz);
 
 	std::thread thread_write([](Circular_buffer& buf, int file_write, int sz) {
 			int written = 0;
 			while(written != sz)
 			{
-			written += buf.get(1);
-			//written += result;
+				written += buf.get(1);
 			}
 			}, std::ref(buf), fd, sz);
 
