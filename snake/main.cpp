@@ -32,7 +32,11 @@ int main() {
   g -> add(s);
   g -> add(s2);
   g -> add(s3);
-  v -> set_model(g);
-  v -> draw();
   v -> run(g);
+
+  v.reset();
+  delete g;
+  delete s;
+  delete s2;
+  delete s3;
 }

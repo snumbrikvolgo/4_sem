@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "control.h"
 
 class AI : public Control
@@ -10,6 +9,5 @@ public:
 
     void on_move_dumb();
     void on_move_clever();
-
-    Snake * snake;
+    Snake* snake;
 };

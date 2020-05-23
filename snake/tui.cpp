@@ -42,8 +42,11 @@ Tty::Tty()
 Tty::~Tty()
 {
   cls();
-  printf("Pokedova!\n");
+  game = NULL;
   tcsetattr(0, TCSAFLUSH, &old);
+  //printf("CALLED DESTRUCTOR TTY\n" );
+  printf("Pokedova!\n");
+
 }
 
 void Tty::cls()
@@ -90,7 +93,6 @@ void Tty::painter(int score, int brand)
 
 void Tty::snakepainter(const Coord& s, const Dir& dir, int color)
 {
-    //std::cerr << color  << " color"<< std::endl;
     setcolor(color);
     putc(s.first, s.second, "^v><#"[dir]);
     setcolor(0);
@@ -114,8 +116,6 @@ void Tty::draw()
     hline(0,winy() - 1, winx());
     gotoxy(3,0);
     printf(" Score: ");
-
-    gotoxy(winx()/2, winy()/2);
     game->paint(std::bind(&Ui::snakepainter, this, _1, _2, _3), std::bind(&Ui::rabbitpainter, this, _1), std::bind(&Ui::painter, this, _1, _2));
     fflush(stdout);
 }
@@ -139,14 +139,12 @@ void Tty::run(Game* g)
         arr.events = POLLIN;
 
         clock_gettime(CLOCK_REALTIME,  &start_time);
-        int n = poll(&arr, 1, (int)ontime_delegater.front().first);
+        int n = poll(&arr, 1, (int)std::get<0>(ontime_delegater.front()));
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         if(n == 1) {
             read(arr.fd, &c, 1);
-            gotoxy(winx()/2, winy()/2);
             if(c == 'q')    return;
-
             onkey_delegater->onkey(c);
         }
 
@@ -154,23 +152,14 @@ void Tty::run(Game* g)
         worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
         int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
 
-        for(uint i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
-            a.first -= d;
+        for(auto& a: ontime_delegater) {
+            std::get<0>(a) -= d;
 
-            ontime_delegater.push_back(a);
-        }
+            if(std::get<0>(a) <= 0) {
+                std::get<0>(a) = std::get<1>(a);
+                std::get<2>(a)();
 
-        for(uint i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
-
-            if(a.first <= 0) {
-                a.second();
             }
-
-            else ontime_delegater.push_back(a);
         }
     }
 }

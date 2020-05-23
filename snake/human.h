@@ -2,10 +2,8 @@
 #include <stdio.h>
 #include "game.h"
 #include "control.h"
-#include "key.h"
 
-
-class Human : public Control, public Key
+class Human: public Control
 {
 public:
     Human(Snake* s);

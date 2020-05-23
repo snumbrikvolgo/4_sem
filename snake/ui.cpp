@@ -19,5 +19,6 @@ Ui* Ui::get(const char* what) {
 }
 
 Ui::~Ui() {
+  //printf("CALLED DESTRUCTOR ui\n" );
   instance = nullptr;
 }

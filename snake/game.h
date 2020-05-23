@@ -26,8 +26,8 @@ class Game;
 
 class Snake{
 public:
-        explicit Snake();
-        Snake(const Snake& s):dir(s.dir), body(s.body){}
+        Snake();
+        ~Snake();
 
         Coord next_position(Dir d, Coord a);
         void move();
@@ -35,7 +35,7 @@ public:
         Snake& operator=(const Snake & s){
             dir = s.dir;
             body = s.body;
-            return * this;
+            return* this;
         }
         void set_direction(Dir d);
 
@@ -43,16 +43,7 @@ public:
         Dir dir;
         int brand;
         std::list<Coord> body;
-
         int snake_score;
-protected:
-};
-
-struct Segment : Coord {
-        Segment(const Coord& c, int b, Dir d)
-                : Coord(c), brand(b), dir(d){}
-        int brand;
-        Dir dir;
 };
 
 using SnakePainter  = std::function<void(Coord, Dir, int)>;
@@ -62,11 +53,10 @@ using ScorePainter  = std::function<void(int, int)>;
 class Game {
 public:
     enum {
-        RABBITS_CHANCE = 20,
         MAX_RABBITS = 20,
     };
-
     Game();
+    ~Game();
     void add(Snake* s);
     void move();
     void paint(SnakePainter ps, RabbitPainter pr, ScorePainter psc);

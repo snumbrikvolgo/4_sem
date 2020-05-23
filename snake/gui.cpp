@@ -27,13 +27,11 @@ Gui::Gui()
     text.setFont(font);
     text.setCharacterSize(40);
 
-
     t_bort.loadFromFile("./images/bort.jpg");
     bort.setTexture(t_bort);
 
     t_ground.loadFromFile("./images/grass.png");
     ground.setTexture(t_ground);
-
 
     t_head.loadFromFile("./images/head.png");
     head.setTexture(t_head);
@@ -68,6 +66,7 @@ Gui::Gui()
 
 Gui::~Gui()
 {
+    game = NULL;
     window.clear();
     printf("Pokedova\n");
 }
@@ -188,17 +187,14 @@ void Gui::draw()
     text.setString("Score : ");
     text.setPosition(0,0);
 
-
     Xline(0);
     Xline(winy());
-
 
     Yline(0);
     Yline(winx() - 1);
     window.draw(text);
 
     game->paint(std::bind(&Ui::snakepainter, this, _1, _2, _3), std::bind(&Ui::rabbitpainter, this, _1),  std::bind(&Ui::painter, this, _1, _2));
-
 }
 
 
@@ -219,16 +215,13 @@ void Gui::Yline(int x)
         bort.setPosition(x * CELL_SIZE, i * CELL_SIZE);
         window.draw(bort);
     }
-
 }
 
 void Gui::run(Game* g)
 {
     game = g;
-    char c;
     draw();
 
-    struct pollfd arr;
     struct timespec start_time, finish_time, worktime;
 
     while(window.isOpen())
@@ -243,34 +236,21 @@ void Gui::run(Game* g)
                     window.close();
         }
 
-        struct timespec start_time, finish_time, worktime;
         clock_gettime(CLOCK_REALTIME,  &start_time);
-        int success = getkey((long)ontime_delegater.front().first);
+        int success = getkey((long)std::get<0>(ontime_delegater.front()));
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         worktime.tv_sec = finish_time.tv_sec - start_time.tv_sec;
         worktime.tv_nsec = finish_time.tv_nsec - start_time.tv_nsec;
         int d = (int)(worktime.tv_sec * 1000) + (int)(worktime.tv_nsec / 1000000);
 
-
-        for(int i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
-            a.first -= d;
-            ontime_delegater.push_back(a);
-        }
-
-        for(int i = 0; i < ontime_delegater.size(); i ++) {
-            std::pair<long, timeontable> a = ontime_delegater.front();
-            ontime_delegater.pop_front();
-
-            if(a.first <= 0) {
-                a.second();
+        for(auto& a: ontime_delegater) {
+            std::get<0>(a) -= d;
+            if(std::get<0>(a) <= 0) {
+                std::get<0>(a) = std::get<1>(a);
+                std::get<2>(a)();
             }
-
-            else ontime_delegater.push_back(a);
         }
-
         draw();
         window.display();
     }
@@ -278,7 +258,6 @@ void Gui::run(Game* g)
 
 void Gui::painter(int brand, int score)
 {
-
     if (5 == score)
         text.setFillColor(sf::Color::Red);
     else if (score == 7)
@@ -287,6 +266,7 @@ void Gui::painter(int brand, int score)
 
     std::ostringstream p;
     p << brand;
+    //printf("brand %d\n", brand);
     text.setString( p.str());
     text.setPosition(30*(score + 1), 5);
     window.draw(text);
@@ -299,11 +279,9 @@ int Gui::getkey(long time)
 {
     sf::Clock clock;
     sf::Time timer = sf::microseconds(1000);
-    clock.restart();
     timer = clock.getElapsedTime();
+    clock.restart();
     char c;
-
-    sf::Event event;
 
     while (timer.asMicroseconds() / 1000 < time) {
 

@@ -9,5 +9,5 @@ public:
     Control(Snake* s);
     ~Control();
 
-    Snake* snake;
+    Snake* snake;    
 };

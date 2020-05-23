@@ -1,25 +1,14 @@
-#ifndef Gui_hpp
-#define Gui_hpp
-
 #include <stdio.h>
-
 #include "ui.h"
 #include "game.h"
-
 #include <termios.h>
-
 #include <SFML/Graphics.hpp>
 
-
 const int CELL_SIZE = 30;
-
-
 class Gui : public Ui {
 public:
     Gui();
     ~Gui();
-
-
     sf::RenderWindow window;
 
     void rabbitpainter(const Coord& c);
@@ -30,8 +19,6 @@ public:
 
     void setcolor(int color);
     void gotoxy(int x, int y);
-
-
     void cls();
     void winch();
 
@@ -76,12 +63,7 @@ private:
     sf::Sprite head_2;
     sf::Sprite body_2;
     sf::Sprite head_l_2;
-
-
+    
     sf::Font font;
     sf::Text text;
 };
-
-
-
-#endif /* Gui_hpp */
