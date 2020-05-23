@@ -16,7 +16,7 @@ void Tty::winch()
 {
     cls();
     struct winsize ws;
-    ioctl(0, TIOCGWINSZ, &ws);
+    ioctl(0, TIOCGWINSZ, &ws); //get win size, as resized signal sigwich
 
     x = ws.ws_col;
     y = ws.ws_row;
@@ -131,19 +131,19 @@ void Tty::run(Game* g)
     char c;
     draw();
 
-    struct pollfd arr;
+    struct pollfd key;
     struct timespec start_time, finish_time, worktime;
     while(1)
     {
-        arr.fd = 0 ;
-        arr.events = POLLIN;
+        key.fd = 0 ;
+        key.events = POLLIN;
 
         clock_gettime(CLOCK_REALTIME,  &start_time);
-        int n = poll(&arr, 1, (int)std::get<0>(ontime_delegater.front()));
+        int n = poll(&key, 1, (int)std::get<0>(ontime_delegater.front()));
         clock_gettime(CLOCK_REALTIME,  &finish_time);
 
         if(n == 1) {
-            read(arr.fd, &c, 1);
+            read(key.fd, &c, 1);
             if(c == 'q')    return;
             onkey_delegater->onkey(c);
         }
