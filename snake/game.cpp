@@ -210,8 +210,10 @@ char Game::check_place_snake(Coord c)
         {
             return 'r';
         }
+    // std::freopen( "error.txt", "w+", stderr );
+    // std::cerr << "winx , winy" <<  Ui::get() -> winx() << " " << Ui::get() -> winy() << std::endl;
 
-    if(c.first == 1 || c.second == 1 || c.second == Ui::get() -> winx() || c.second == Ui::get() -> winy()) return 'b';
+    if(c.first == 0 || c.second == 0 || c.second == (Ui::get() -> winy() - 1) || c.first == (Ui::get() -> winx()) - 1) return 'b';
 
     return ' ';
 }
