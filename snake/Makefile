@@ -1,7 +1,7 @@
 OBJ= ui.o gui.o tui.o game.o control.o human.o AI.o main.o
 LIBS=-lsfml-graphics -lsfml-window -lsfml-system
 CXXFLAGS += -std=c++11
-PROG=main
+PROG=snake
 CXX:=g++
 
 all:${PROG}
