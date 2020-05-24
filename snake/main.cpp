@@ -10,10 +10,16 @@
 #include "gui.h"
 #include "AI.h"
 
-int main() {
+int main(int argc, char* argv[]) {
   srand(time(NULL));
+  const char* name = "tty";
 
-  std::unique_ptr<Ui> v(Ui::get("gui"));
+  if (argc != 1)
+  {
+      name = argv[1];
+  }
+
+  std::unique_ptr<Ui> v(Ui::get(name));
   if (!v) {
     fprintf(stderr, "Cannot init UI\n");
     return 0;
