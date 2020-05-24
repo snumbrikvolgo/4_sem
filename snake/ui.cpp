@@ -1,9 +1,7 @@
 #include <cstring>
-
 #include "ui.h"
 #include "tui.h"
 #include "gui.h"
-#include "key.h"
 #include "game.h"
 
 Ui* Ui::instance;
