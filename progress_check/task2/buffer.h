@@ -3,8 +3,8 @@
 #include <utility>
 #include <future>
 
-#define CAPACITY 1024
-#define OUT 4
+#define CAPACITY 1024*1024
+#define OUT 1024*4
 
 class Circular_buffer {
 public:
@@ -22,8 +22,9 @@ public:
 
         if ((ch_read == sz % capacity_ || sz >= 0) && flag_put != 1) {
             almost_full.first.set_value(0);
-
+            mutex_.lock();
             flag_put = 1;
+            mutex_.unlock();
         }
 
         mutex_.lock();
@@ -42,8 +43,9 @@ public:
         } else if (size() > 0.8 * capacity_ && flag_put != 1) {
             //printf("WRITE BIG\n");
             almost_full.first.set_value(0);
-
+            mutex_.lock();
             flag_put = 1;
+            mutex_.unlock();
         }
         return (ch_read == 0)? -5 : ch_read;
     }
@@ -56,13 +58,18 @@ public:
             almost_full.second.get();
             almost_full.first = std::promise<int>();
             almost_full.second = almost_full.first.get_future();
-
+            mutex_.lock();
             flag_put = 0;
+            mutex_.unlock();
+
+
         } else if (size() < 0.2 * capacity_ && flag_get != 1) {
             //printf("GET ALMOST EMPTY\n");
             almost_empty.first.set_value(0);
-
+            mutex_.lock();
             flag_get = 1;
+            mutex_.unlock();
+
         }
         if (size() < OUT) ch_write = write(fd, buffer_ + head_, size());
         else              ch_write = write(fd, buffer_ + head_, OUT);
